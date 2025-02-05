@@ -18,43 +18,42 @@ class TestController extends AbstractController
     public const USERS_DATA = [
         [
             'id'    => '1',
-            'email' => 'test1@gmail.com',
-            'name'  => 'John1'
+            'email' => 'ipz233_saye@student.ztu.edu.ua',
+            'full_name'  => 'Anna Svintsitska'
         ],
         [
             'id'    => '2',
-            'email' => 'test2@gmail.com',
-            'name'  => 'John2'
+            'email' => 'alpha2@example.com',
+            'full_name'  => 'Bob Smith'
         ],
         [
             'id'    => '3',
-            'email' => 'test3@gmail.com',
-            'name'  => 'John3'
+            'email' => 'alpha3@example.com',
+            'full_name'  => 'Charlie Johnson'
         ],
         [
-            'id'    => '4',
-            'email' => 'test4@gmail.com',
-            'name'  => 'John4'
+            'id' => '4',
+            'email'   => 'alpha4@example.com',
+            'full_name'  => 'Diana White'
         ],
         [
-            'id'    => '5',
-            'email' => 'test5@gmail.com',
-            'name'  => 'John5'
+            'id' => '5',
+            'email'   => 'alpha5@example.com',
+            'full_name'  => 'Ethan Davis'
         ],
         [
-            'id'    => '6',
-            'email' => 'test6@gmail.com',
-            'name'  => 'John6'
+            'id' => '6',
+            'email'   => 'alpha6@example.com',
+            'full_name'  => 'Fiona Wilson'
         ],
         [
-            'id'    => '7',
-            'email' => 'test7@gmail.com',
-            'name'  => 'John7'
+            'id' => '7',
+            'email'  => 'alpha7@example.com',
+            'full_name'  => 'George Martinez'
         ],
     ];
 
     #[Route('/users', name: 'app_collection_users', methods: ['GET'])]
-    #[IsGranted("ROLE_ADMIN")]
     public function getCollection(): JsonResponse
     {
         return new JsonResponse([
@@ -73,12 +72,13 @@ class TestController extends AbstractController
     }
 
     #[Route('/users', name: 'app_create_users', methods: ['POST'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function createItem(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
 
-        if (!isset($requestData['email'], $requestData['name'])) {
-            throw new UnprocessableEntityHttpException("name and email are required");
+        if (!isset($requestData['email'], $requestData['full_name'])) {
+            throw new UnprocessableEntityHttpException("full name and email are required");
         }
 
         // TODO check by regex
@@ -87,7 +87,7 @@ class TestController extends AbstractController
 
         $newUser = [
             'id'    => $countOfUsers + 1,
-            'name'  => $requestData['name'],
+            'full_name'  => $requestData['full_name'],
             'email' => $requestData['email']
         ];
 
@@ -99,6 +99,7 @@ class TestController extends AbstractController
     }
 
     #[Route('/users/{id}', name: 'app_delete_users', methods: ['DELETE'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function deleteItem(string $id): JsonResponse
     {
         $this->findUserById($id);
@@ -113,15 +114,15 @@ class TestController extends AbstractController
     {
         $requestData = json_decode($request->getContent(), true);
 
-        if (!isset($requestData['name'])) {
-            throw new UnprocessableEntityHttpException("name is required");
+        if (!isset($requestData['full_name'])) {
+            throw new UnprocessableEntityHttpException("full name is required");
         }
 
         $userData = $this->findUserById($id);
 
         // TODO update user name
 
-        $userData['name'] = $requestData['name'];
+        $userData['full_name'] = $requestData['full_name'];
 
         return new JsonResponse(['data' => $userData], Response::HTTP_OK);
     }
